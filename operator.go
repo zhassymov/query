@@ -8,7 +8,7 @@ const (
 	Lt
 	Lte
 	In
-	NotIn
+	Nin
 )
 
 type Operator int
@@ -29,7 +29,7 @@ func (o Operator) String() string {
 		return "lte"
 	case In:
 		return "in"
-	case NotIn:
+	case Nin:
 		return "nin"
 	default:
 		return "undefined"
