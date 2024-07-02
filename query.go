@@ -1,6 +1,7 @@
 package query
 
 import (
+	"cmp"
 	"errors"
 	"github.com/zhassymov/please"
 	"strconv"
@@ -13,15 +14,18 @@ type Query struct {
 	criteria map[string][]Criteria[any]
 }
 
+// New creates a new query.
 func New(opts ...please.Validate[*Query]) (Query, error) {
 	q := Query{criteria: make(map[string][]Criteria[any], len(opts))}
 	return q, please.Join(&q, opts...)
 }
 
+// Offset returns the offset value and the set indication.
 func (q *Query) Offset() (int, bool) {
 	return q.offset, q.offset > 0
 }
 
+// Offset sets the offset value with validation.
 func Offset(offset int, opts ...please.Validate[int]) please.Validate[*Query] {
 	return func(q *Query) error {
 		if err := please.Join(offset, opts...); err != nil {
@@ -32,6 +36,7 @@ func Offset(offset int, opts ...please.Validate[int]) please.Validate[*Query] {
 	}
 }
 
+// OffsetString sets the offset value with validation from a string.
 func OffsetString(offset string, opts ...please.Validate[int]) please.Validate[*Query] {
 	return func(q *Query) error {
 		o, err := strconv.Atoi(offset)
@@ -46,10 +51,12 @@ func OffsetString(offset string, opts ...please.Validate[int]) please.Validate[*
 	}
 }
 
+// Limit returns the limit value and the set indication.
 func (q *Query) Limit() (int, bool) {
 	return q.limit, q.limit > 0
 }
 
+// Limit sets the limit value with validation.
 func Limit(limit int, opts ...please.Validate[int]) please.Validate[*Query] {
 	return func(q *Query) error {
 		if err := please.Join(limit, opts...); err != nil {
@@ -60,6 +67,7 @@ func Limit(limit int, opts ...please.Validate[int]) please.Validate[*Query] {
 	}
 }
 
+// LimitString sets the limit value with validation from a string.
 func LimitString(limit string, opts ...please.Validate[int]) please.Validate[*Query] {
 	return func(q *Query) error {
 		l, err := strconv.Atoi(limit)
@@ -74,10 +82,12 @@ func LimitString(limit string, opts ...please.Validate[int]) please.Validate[*Qu
 	}
 }
 
+// Cursor returns the cursor value and the set indication.
 func (q *Query) Cursor() (string, bool) {
 	return q.cursor, q.cursor != ""
 }
 
+// Cursor sets the cursor value with validation.
 func Cursor(cursor string, opts ...please.Validate[string]) please.Validate[*Query] {
 	return func(q *Query) error {
 		if err := please.Join(cursor, opts...); err != nil {
@@ -88,7 +98,7 @@ func Cursor(cursor string, opts ...please.Validate[string]) please.Validate[*Que
 	}
 }
 
-// Criteria returns the criteria for a field.
+// Criteria returns the criteria for a field and the set indication.
 func (q *Query) Criteria(field string) ([]Criteria[any], bool) {
 	if q.criteria == nil {
 		return nil, false
@@ -197,7 +207,23 @@ func NotOneOf[T comparable](field string, values []T, opts ...please.Validate[T]
 		if err := errors.Join(errs...); err != nil {
 			return err
 		}
-		q.criteria[field] = append(q.criteria[field], Criteria[any]{NotIn, values})
+		q.criteria[field] = append(q.criteria[field], Criteria[any]{Nin, values})
+		return nil
+	}
+}
+
+// Between matches values that are between the specified values.
+func Between[T cmp.Ordered](field string, x, y T, opts ...please.Validate[T]) please.Validate[*Query] {
+	return func(q *Query) error {
+		minimal := min(x, y)
+		maximal := max(x, y)
+		if err := please.Join(minimal, opts...); err != nil {
+			return err
+		}
+		if err := please.Join(maximal, opts...); err != nil {
+			return err
+		}
+		q.criteria[field] = append(q.criteria[field], Criteria[any]{Gte, minimal}, Criteria[any]{Lte, maximal})
 		return nil
 	}
 }
