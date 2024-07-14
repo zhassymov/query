@@ -1,2 +1,6 @@
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/zhassymov/please v0.0.3 h1:zr+43y+sGQGUDILxGCu1cK/VWTo35RKQhTAKty4ho9I=
 github.com/zhassymov/please v0.0.3/go.mod h1:HjCo331D8oz4itKBZou4LmG+EMGvr+FZEG5+mwe19Rs=
+github.com/zhassymov/please v0.0.4 h1:ZEg7lXZtKPH0Kh9ljE7WSqnuiNTjWRyoIVvzdnuJnhQ=
+github.com/zhassymov/please v0.0.4/go.mod h1:KBRSyhC0s+0lDJcdz4x9sgTSomWzmXJWVtQuPBXizOg=
