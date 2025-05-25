@@ -3,8 +3,9 @@ package query
 import (
 	"cmp"
 	"errors"
-	"github.com/zhassymov/please"
 	"strconv"
+
+	"github.com/zhassymov/please"
 )
 
 type Query struct {
